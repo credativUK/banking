@@ -20,5 +20,5 @@
 #
 ##############################################################################
 
-from . import wizard
-from . import account_banking_sepa
+import wizard
+import account_banking_sepa

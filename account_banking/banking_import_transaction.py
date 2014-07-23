@@ -1079,6 +1079,10 @@ class banking_import_transaction(orm.Model):
                             partner_banks = partner_bank_obj.browse(
                                 cr, uid, [partner_bank_id], context=context)
 
+            #set partner is partner is null
+            if not partner_ids and transaction.message:
+                partner_pool = self.pool.get('res.partner')
+                partner_ids = partner_pool.search(cr,uid,[('name','=',transaction.message)],context=context)
             # Credit means payment... isn't it?
             if (not move_info
                 and transaction.statement_line_id.amount < 0 and payment_lines):

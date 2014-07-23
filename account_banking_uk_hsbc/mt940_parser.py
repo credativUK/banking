@@ -35,7 +35,7 @@ class HSBCParser(object):
 
         # MT940 header
         recparse["20"] = ":(?P<recordid>20):(?P<transref>.{1,16})"
-        recparse["25"] = ":(?P<recordid>25):(?P<sortcode>\d{6})(?P<accnum>\d{1,29})"
+        recparse["25"] = ":(?P<recordid>25):(?P<sortcode>[A-Z0-9]{6})(?P<accnum>[A-Z0-9]{1,29})"
         recparse["28"] = ":(?P<recordid>28C?):(?P<statementnr>.{1,8})"
 
         # Opening balance 60F
@@ -44,26 +44,26 @@ class HSBCParser(object):
                 + "(?P<startingbalance>[\d,]{1,15})"
 
         # Transaction
-        recparse["61"] = """\
-:(?P<recordid>61):\
-(?P<valuedate>\d{6})(?P<bookingdate>\d{4})?\
-(?P<creditmarker>R?[CD])\
-(?P<currency>[A-Z])?\
-(?P<amount>[\d,]{1,15})\
-(?P<bookingcode>[A-Z][A-Z0-9]{3})\
-(?P<custrefno>[%(ebcdic)s]{1,16})\
-(?://)\
-(?P<bankref>[%(ebcdic)s]{1,16})?\
-(?:\n(?P<furtherinfo>[%(ebcdic)s]))?\
-""" % (patterns)
-
+        #recparse["61"] = """\
+#:(?P<recordid>61):\
+#(?P<valuedate>\d{6})(?P<bookingdate>\d{4})?\
+#(?P<creditmarker>R?[CD])\
+#(?P<currency>[A-Z])?\
+#(?P<amount>[\d,]{1,15})\
+#(?P<bookingcode>[A-Z][A-Z0-9]{3})\
+#(?P<custrefno>[%(ebcdic)s]{1,16})\
+#(?://)\
+#(?P<bankref>[%(ebcdic)s]{1,16})?\
+#(?:\n(?P<furtherinfo>[%(ebcdic)s]))?\
+#""" % (patterns)
+        recparse["61"] = ":(?P<recordid>61):(?P<valuedate>\\d{6})(?P<bookingdate>\\d{4})?(?P<creditmarker>R?[CD])(?P<currency>[A-Z])?(?P<amount>[\\d,]{1,15})(?P<bookingcode>[A-Z][A-Z0-9]{3})(?P<custrefno>[\\w/\\?:\\(\\).,'+{} -]{1,16})"
         # Further info
         recparse["86"] = ":(?P<recordid>86):" \
                 + "(?P<infoline1>.{1,80})?" \
-                + "(?:\n(?P<infoline2>.{1,80}))?" \
-                + "(?:\n(?P<infoline3>.{1,80}))?" \
-                + "(?:\n(?P<infoline4>.{1,80}))?" \
-                + "(?:\n(?P<infoline5>.{1,80}))?"
+                #+ "(?:\n(?P<infoline2>.{1,80}))?" \
+                #+ "(?:\n(?P<infoline3>.{1,80}))?" \
+                #+ "(?:\n(?P<infoline4>.{1,80}))?" \
+                #+ "(?:\n(?P<infoline5>.{1,80}))?"
 
         # Forward available balance (64) /  Closing balance (62F) / Interim balance (62M)
         recparse["64"] = ":(?P<recordid>64|62[FM]):" \

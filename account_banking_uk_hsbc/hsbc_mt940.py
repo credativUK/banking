@@ -133,6 +133,9 @@ class statement(models.mem_bank_statement):
         else:
             transaction = self.transactions[-1]
             transaction.id = ','.join([record[k] for k in ['infoline{0}'.format(i) for i in range(2,5)] if record.has_key(k)])
+        #set partner in transaction message
+        if 'infoline1' in record:
+            transaction.message = record['infoline1']
 
 def raise_error(message, line):
     raise osv.osv.except_osv(_('Import error'),
