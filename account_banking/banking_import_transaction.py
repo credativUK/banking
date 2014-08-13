@@ -1605,6 +1605,9 @@ class account_bank_statement_line(orm.Model):
             st_line_number = statement_pool.get_next_st_line_number(
                 cr, uid, st_number, st_line, context)
             company_currency_id = st.journal_id.company_id.currency_id.id
+            #FIX - Multicompany statement line confirm
+            if not context.get('company_id',False):
+                context['company_id'] = st.journal_id.company_id.id
             statement_pool.create_move_from_st_line(
                 cr, uid, st_line.id, company_currency_id, st_line_number, context)
             self.write(
