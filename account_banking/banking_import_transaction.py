@@ -1149,6 +1149,14 @@ class banking_import_transaction(orm.Model):
                 values['partner_id'] = values['partner_bank_id'] = False
             if not values['partner_id'] and partner_ids and len(partner_ids) == 1:
                 values['partner_id'] = partner_ids[0]
+            if values['partner_id']:
+                ctx = context.copy()
+                if not ctx.get('force_company', False) and transaction.company_id and transaction.company_id.id:
+                    ctx.update({'force_company': transaction.company_id.id})
+                partner = self.pool.get('res.partner').browse(cr, uid, values['partner_id'], context=ctx)
+                values['account_id'] = transaction.transferred_amount < 0 and \
+                                partner.property_account_payable.id or \
+                                partner.property_account_receivable.id
             if (not values['partner_bank_id'] and partner_banks and
                 len(partner_banks) == 1):
                 values['partner_bank_id'] = partner_banks[0].id
