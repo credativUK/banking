@@ -294,10 +294,12 @@ class banking_import_transaction(orm.Model):
             # TODO: currency coercing
             best = [x for x in candidates
                     if (is_zero(x.move_id, ((x.debit or 0.0) - (x.credit or 0.0)) -
-                                trans.statement_line_id.amount)
+                                trans.statement_line_id.amount) or 
+                                is_zero(x.move_id, (x.amount_currency) -
+                                trans.statement_line_id.amount))
                         and convert.str2date(x.date, '%Y-%m-%d') <=
                         (convert.str2date(trans.execution_date, '%Y-%m-%d') +
-                         self.payment_window))
+                         self.payment_window)
                    ]
             if len(best) == 1:
                 # Exact match
