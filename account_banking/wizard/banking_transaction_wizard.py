@@ -197,10 +197,12 @@ class banking_transaction_wizard(orm.TransientModel):
                             cr, uid, todo_entry[1], context)
                     transaction_id = wiz.import_transaction_id.id
                     statement_line_id = wiz.statement_line_id.id
-
                     if len(todo) > 0:
+                        split_amount = move_line.debit or -move_line.credit
+                        if move_line.currency_id and move_line.currency_id == wiz.statement_line_id.currency:
+                            split_amount =  move_line.amount_currency
                         statement_line_id = wiz.statement_line_id.split_off(
-                                move_line.debit or -move_line.credit)[0]
+                                split_amount)[0]
                         transaction_id = statement_line_obj.browse(
                                 cr,
                                 uid,
