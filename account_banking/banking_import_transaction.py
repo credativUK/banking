@@ -777,8 +777,13 @@ class banking_import_transaction(orm.Model):
         if move_lines and len(move_lines) == 1:
             retval['reference'] = move_lines[0].ref
         if retval['match_type'] == 'invoice':
-            retval['invoice_ids'] = list(set([x.invoice.id for x in move_lines]))
-            retval['type'] = type_map[move_lines[0].invoice.type]
+            retval['invoice_ids'] = list(set([x.invoice.id
+                                              for x in move_lines
+                                              if x.invoice]))
+            for invoice in self.pool.get('account.invoice').browse(cr, uid,
+                                retval['invoice_ids']):
+                retval['type'] = type_map[invoice.type]
+                break
         return retval
 
     def move_info2values(self, move_info):
